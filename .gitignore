@@ -19,3 +19,5 @@ docs/screenshots/*.html
 
 .idea/
 .vscode/
+
+AraBART_5epoch_5e5/model/model.safetensors
