@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>وجيز</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v='20260317-ui3') }}">
+    <link rel="icon" href="/static/images/logo.png" type="image/png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body class="page-home">
+    <header>
+        <nav>
+            <div class="right-icons">
+                <div class="auth-buttons">
+                    <a href="{{ url_for('login') }}" class="login">تسجيل الدخول</a>
+                    <a href="{{ url_for('create_account') }}" class="create-account">إنشاء حساب</a>
+                </div>
+            </div>
+            <ul class="nav-links" id="nav-Links">
+                <li><a href="#" class="active">الرئيسية</a></li>
+            </ul>
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="شعار وجيز">
+            </div>
+            <div class="toggle" id="toggleButton" onclick="toggleMenu()">☰</div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="about-us">
+            <div class="container">
+                <div class="text">
+                    <span class="eyebrow">منصة قانونية ذكية</span>
+                    <h1>وجيز تساعدك على تصنيف القضايا وتلخيصها بسهولة</h1>
+                    <p>
+                        توفر وجيز تجربة سريعة وواضحة للتعامل مع النصوص القانونية العربية. أدخل نص القضية لتحصل على
+                        تصنيف أولي وملخص يساعدك على فهم المحتوى بشكل أسرع واتخاذ الخطوة التالية بثقة.
+                    </p>
+                    <div class="hero-actions">
+                        <a href="{{ url_for('create_account') }}" class="btn create-account">ابدأ الآن</a>
+                        <a href="{{ url_for('login') }}" class="btn secondary-btn">تسجيل الدخول</a>
+                    </div>
+                    <div class="hero-highlights">
+                        <div class="highlight-pill">تصنيف تلقائي للقضايا</div>
+                        <div class="highlight-pill">ملخص عربي واضح</div>
+                        <div class="highlight-pill">لوحة متابعة منظمة</div>
+                    </div>
+                    <div class="hero-metrics">
+                        <div class="metric-card">
+                            <strong>تحليل أسرع</strong>
+                            <span>ابدأ بفهم النص في وقت أقل</span>
+                        </div>
+                        <div class="metric-card">
+                            <strong>تنظيم أوضح</strong>
+                            <span>نتائج محفوظة وسهلة الرجوع</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="image">
+                    <img src="{{ url_for('static', filename='images/lawyer-image.png') }}" alt="Lawyer Image">
+                </div>
+            </div>
+        </section>
+
+        <section class="journey">
+            <span class="section-kicker">رحلة الاستخدام</span>
+            <h2>كيف تعمل وجيز؟</h2>
+            <div class="journey-steps">
+                <div class="card">
+                    <span class="step-badge">1</span>
+                    <h3>أنشئ حسابك</h3>
+                    <p>ابدأ بحساب بسيط للوصول إلى جميع أدوات التحليل والمتابعة.</p>
+                </div>
+                <div class="card">
+                    <span class="step-badge">2</span>
+                    <h3>أدخل نص القضية</h3>
+                    <p>ألصق نصك القانوني داخل صفحة "صنف ولخص" ليبدأ التحليل مباشرة.</p>
+                </div>
+                <div class="card">
+                    <span class="step-badge">3</span>
+                    <h3>راجع النتيجة</h3>
+                    <p>احصل على تصنيف وملخص واضحين وارجع لهما لاحقاً من لوحة المتابعة.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="value-strip">
+            <div class="value-card">
+                <span class="value-label">رفع مرن</span>
+                <strong>نص مباشر أو ملفات</strong>
+                <p>تعامل مع النصوص، ملفات PDF، مستندات Word، وحتى الصور الممسوحة ضوئياً من واجهة واحدة.</p>
+            </div>
+            <div class="value-card">
+                <span class="value-label">ملخصات جاهزة</span>
+                <strong>فهم أسرع للقضية</strong>
+                <p>احصل على تصنيف أولي وملخص عربي واضح يساعدك على مراجعة القضية بسرعة ووضوح.</p>
+            </div>
+            <div class="value-card">
+                <span class="value-label">لوحة متابعة</span>
+                <strong>رؤية أوضح لنشاطك</strong>
+                <p>راجع القضايا السابقة، نوع الملفات، وأبرز الكلمات الشائعة من خلال لوحة تحكم منظمة.</p>
+            </div>
+        </section>
+
+        <section class="goals">
+            <span class="section-kicker">الرؤية</span>
+            <h2>أهدافنا</h2>
+            <div class="goal-cards">
+                <div class="card">
+                    <h3>رفع كفاءة التصنيف</h3>
+                    <p>المساعدة في فرز القضايا بسرعة أكبر وتقديم بداية أوضح للتحليل القانوني.</p>
+                </div>
+                <div class="card">
+                    <h3>توفير الوقت والجهد</h3>
+                    <p>تقليل الوقت المستهلك في قراءة النصوص الطويلة والوصول السريع إلى الخلاصة.</p>
+                </div>
+                <div class="card">
+                    <h3>دعم العربية القانونية</h3>
+                    <p>تقديم تجربة تعتمد على اللغة العربية في الذكاء الاصطناعي ومعالجة المستندات القانونية.</p>
+                </div>
+                <div class="card">
+                    <h3>تعزيز الإنتاجية</h3>
+                    <p>مساندة المحامين والباحثين والطلاب في التعامل مع القضايا المعقدة بوضوح أكبر.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="team">
+            <span class="section-kicker">الفريق</span>
+            <h2>فريق العمل</h2>
+            <div class="team-cards">
+                <div class="card">
+                    <img src="{{ url_for('static', filename='images/girl_pic.png') }}" alt="Bushra" class="team-img">
+                    <h3>بشرى بن دعجم</h3>
+                    <p>مهندسة ذكاء اصطناعي</p>
+                    <a href="https://www.linkedin.com/in/bushra-dajam" target="_blank" class="linkedin-link">
+                        <i class="fab fa-linkedin"></i> LinkedIn
+                    </a>
+                </div>
+                <div class="card">
+                    <img src="{{ url_for('static', filename='images/girl_pic.png') }}" alt="Layali" class="team-img">
+                    <h3>ليالي السلمي</h3>
+                    <p>مهندسة ذكاء اصطناعي</p>
+                    <a href="https://www.linkedin.com/in/layali-alsolami" target="_blank" class="linkedin-link">
+                        <i class="fab fa-linkedin"></i> LinkedIn
+                    </a>
+                </div>
+                <div class="card">
+                    <img src="{{ url_for('static', filename='images/girl_pic.png') }}" alt="Reyof" class="team-img">
+                    <h3>ريوف القرشي</h3>
+                    <p>مهندسة ذكاء اصطناعي</p>
+                    <a href="https://www.linkedin.com/in/reyof-alqurashi-97447b300" target="_blank" class="linkedin-link">
+                        <i class="fab fa-linkedin"></i> LinkedIn
+                    </a>
+                </div>
+                <div class="card">
+                    <img src="{{ url_for('static', filename='images/girl_pic.png') }}" alt="Elaf" class="team-img">
+                    <h3>إيلاف هواري</h3>
+                    <p>مهندسة ذكاء اصطناعي</p>
+                    <a href="https://www.linkedin.com/in/elaf-hawwari-24357b307" target="_blank" class="linkedin-link">
+                        <i class="fab fa-linkedin"></i> LinkedIn
+                    </a>
+                </div>
+                <div class="card">
+                    <img src="{{ url_for('static', filename='images/girl_pic.png') }}" alt="Shatha" class="team-img">
+                    <h3>شذا الظاهري</h3>
+                    <p>مهندسة ذكاء اصطناعي</p>
+                    <a href="https://www.linkedin.com/in/shatha-aldhahri-1668a02b7" target="_blank" class="linkedin-link">
+                        <i class="fab fa-linkedin"></i> LinkedIn
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/script.js', v='20260317-ui3') }}"></script>
+</body>
+
+</html>

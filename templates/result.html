@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صنف ولخص</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v='20260317-ui3') }}">
+    <link rel="icon" href="/static/images/logo.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body class="page-result">
+    <header>
+        <nav>
+            <div class="right-icons">
+                <div class="auth-buttons">
+                    <a href="{{ url_for('logout') }}" class="login">خروج</a>
+                    <a href="{{ url_for('profile') }}" class="create-account">الملف الشخصي</a>
+                </div>
+            </div>
+            <ul class="nav-links" id="nav-Links">
+                <li><a href="{{ url_for('index') }}">الرئيسية</a></li>
+                <li><a href="{{ url_for('profile') }}">الملف الشخصي</a></li>
+                <li><a href="#" class="active">صنف ولخص</a></li>
+            </ul>
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="شعار وجيز">
+            </div>
+            <div class="toggle" id="toggleButton" onclick="toggleMenu()">☰</div>
+        </nav>
+    </header>
+
+    <main class="result-container">
+        <section class="analysis-hero">
+            <div>
+                <span class="eyebrow">مساحة التحليل</span>
+                <h1 class="analysis-title">صنف ولخص</h1>
+                <p>أدخل نص القضية أو ارفع ملفاً وسنجهز لك تصنيفاً أولياً وملخصاً واضحاً خلال لحظات.</p>
+            </div>
+            <span id="text-counter" class="text-counter">0 حرف</span>
+        </section>
+        <div class="hero-highlights result-highlights">
+            <div class="highlight-pill">ألصق النص كاملاً</div>
+            <div class="highlight-pill">أو ارفع PDF / DOC / DOCX</div>
+            <div class="highlight-pill">OCR للملفات الممسوحة</div>
+            <div class="highlight-pill">تصدير النتيجة PDF</div>
+        </div>
+
+        <section class="analysis-layout">
+            <aside class="analysis-side-panel">
+                <div class="analysis-tip-card">
+                    <span class="panel-kicker">قبل الإرسال</span>
+                    <h3>أفضل نتيجة تبدأ من نص واضح</h3>
+                    <p>كلما كان النص كاملاً ومنظماً كانت نتيجة التصنيف والتلخيص أدق وأسهل في المراجعة.</p>
+                </div>
+                <div class="analysis-checklist">
+                    <div class="check-item">أرفق PDF أو DOC أو DOCX أو صورة عند الحاجة</div>
+                    <div class="check-item">يمكن لصق النص يدوياً بدون رفع ملف</div>
+                    <div class="check-item">النتيجة تحفظ تلقائياً في لوحة المتابعة</div>
+                    <div class="check-item">يمكنك تصدير آخر نتيجة مباشرة إلى PDF</div>
+                </div>
+            </aside>
+
+            <section class="analysis-main-panel">
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="flash-stack">
+                    {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="upload-panel">
+                        <label for="document" class="upload-label">رفع ملف</label>
+                        <input type="file" id="document" name="document" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg">
+                        <p class="field-helper">الصيغ المدعومة: PDF, DOC, DOCX, TXT, PNG, JPG. إذا كان الملف ممسوحاً ضوئياً فسيتم استخدام OCR. ملفات DOC القديمة سيتم تحويلها عبر Word إذا كان متوفراً على الجهاز.</p>
+                    </div>
+                    <textarea name="text" id="text-input" placeholder="الصق نص القضية أو المستند القانوني هنا...">{{ input_text if input_text else '' }}</textarea>
+                    <div class="helper-row">
+                        <p class="field-helper">يمكنك الكتابة مباشرة أو الاعتماد على النص المستخرج من الملف المرفوع.</p>
+                    </div>
+                    <button type="submit" data-loading-text="جاري التحليل والتلخيص...">إرسال</button>
+                </form>
+            </section>
+        </section>
+
+        {% if classification %}
+        <div id="classification-result" class="result-card classification-card">
+            <h3>تصنيف القضية</h3>
+            <p id="classification-predict">{{ classification }}</p>
+        </div>
+        {% endif %}
+
+        {% if summary %}
+        <div id="summary-result" class="result-card summary-card">
+            <h3>ملخص القضية</h3>
+            <p id="summary-text">{{ summary }}</p>
+        </div>
+        {% endif %}
+
+        {% if classification and summary %}
+        <div class="export-row">
+            {% if source_name %}
+            <span class="source-pill">المصدر: {{ source_name }}</span>
+            {% endif %}
+            <a href="{{ url_for('export_result_pdf') }}" class="btn create-account">تصدير النتيجة PDF</a>
+        </div>
+        {% endif %}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/script.js', v='20260317-ui3') }}"></script>
+</body>
+
+</html>

@@ -1,0 +1,1 @@
+AraBART_5epoch_5e5/model/model.safetensors filter=lfs diff=lfs merge=lfs -text

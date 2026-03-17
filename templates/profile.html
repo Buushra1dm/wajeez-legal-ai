@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الملف الشخصي | وجيز</title>
+    <link rel="icon" href="/static/images/logo.png" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v='20260317-ui3') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let caseChart;
+        let fileTypeChart;
+
+        async function updateTotalDocuments() {
+            try {
+                const response = await fetch('/get_total_documents');
+                const data = await response.json();
+                document.getElementById('totalDocuments').innerHTML = `
+                    <div>
+                        <span class="metric-label">إجمالي القضايا</span>
+                        <strong class="metric-value">${data.totalDocuments}</strong>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error fetching total documents count:', error);
+            }
+        }
+
+        function updateDoughnutChart(processedData) {
+            const ctx = document.getElementById('caseChart').getContext('2d');
+            const emptyState = document.getElementById('chartEmptyState');
+            emptyState.style.display = processedData.data.length ? 'none' : 'flex';
+
+            if (!caseChart) {
+                caseChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: processedData.labels,
+                        datasets: [{
+                            data: processedData.data,
+                            backgroundColor: ['#7a4330', '#9b6249', '#cda56f', '#d7b29f', '#5f4a41'],
+                            hoverBackgroundColor: ['#643626', '#874f38', '#b89058', '#c69f8a', '#4e3c35'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    font: {
+                                        family: 'Cairo',
+                                        size: 13
+                                    }
+                                }
+                            }
+                        },
+                        cutout: '62%'
+                    }
+                });
+            } else {
+                caseChart.data.labels = processedData.labels;
+                caseChart.data.datasets[0].data = processedData.data;
+                caseChart.update();
+            }
+        }
+
+        function updateFileTypeChart(data) {
+            const labels = data.map(item => item.type.toUpperCase());
+            const values = data.map(item => item.count);
+            const emptyState = document.getElementById('fileTypeEmptyState');
+            emptyState.style.display = values.some(value => value > 0) ? 'none' : 'flex';
+
+            const ctx = document.getElementById('fileTypeChart').getContext('2d');
+            if (!fileTypeChart) {
+                fileTypeChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels,
+                        datasets: [{
+                            label: 'عدد الملفات',
+                            data: values,
+                            backgroundColor: ['#d9b27a', '#b06d4f', '#7a4330', '#5f4a41'],
+                            borderRadius: 14,
+                            borderSkipped: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    precision: 0,
+                                    font: {
+                                        family: 'Cairo'
+                                    }
+                                },
+                                grid: {
+                                    color: 'rgba(122, 67, 48, 0.08)'
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    font: {
+                                        family: 'Cairo',
+                                        size: 13
+                                    }
+                                },
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            } else {
+                fileTypeChart.data.labels = labels;
+                fileTypeChart.data.datasets[0].data = values;
+                fileTypeChart.update();
+            }
+        }
+
+        async function fetchChartData() {
+            try {
+                const response = await fetch('/get_category_data');
+                const data = await response.json();
+                updateDoughnutChart(data);
+            } catch (error) {
+                console.error('Error fetching chart data:', error);
+            }
+        }
+
+        function renderKeywordCloud(keywords) {
+            const container = document.getElementById('keywordCloud');
+            container.innerHTML = '';
+
+            if (!keywords.length) {
+                container.innerHTML = `
+                    <div class="empty-state compact-empty-state">
+                        <h3>لا توجد كلمات بارزة بعد</h3>
+                        <p>أضف قضايا جديدة لعرض الكلمات الأكثر تكراراً في نصوصك.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            keywords.forEach((item, index) => {
+                const chip = document.createElement('div');
+                chip.className = 'keyword-chip';
+                chip.style.setProperty('--keyword-scale', `${1 + ((keywords.length - index) / Math.max(keywords.length, 1)) * 0.22}`);
+                chip.innerHTML = `
+                    <span>${item.keyword}</span>
+                    <strong>${item.count}</strong>
+                `;
+                container.appendChild(chip);
+            });
+        }
+
+        function populateCaseTypeFilter(options) {
+            const filter = document.getElementById('caseTypeFilter');
+            const currentValue = filter.value || 'الكل';
+
+            filter.innerHTML = '';
+            options.forEach(option => {
+                const item = document.createElement('option');
+                item.value = option;
+                item.textContent = option;
+                filter.appendChild(item);
+            });
+
+            filter.value = options.includes(currentValue) ? currentValue : 'الكل';
+        }
+
+        function displaySummaryAverage(value) {
+            document.getElementById('averageSummaryLength').innerHTML = `
+                <div>
+                    <span class="metric-label">متوسط طول الملخص</span>
+                    <strong class="metric-value">${value || 0}</strong>
+                    <small class="metric-subtext">كلمة لكل ملخص</small>
+                </div>
+            `;
+        }
+
+        function displaySummaries(data) {
+            const summariesContainer = document.getElementById('caseSummaries');
+            summariesContainer.innerHTML = '';
+
+            if (!data.cases.length) {
+                summariesContainer.innerHTML = `
+                    <div class="empty-state">
+                        <h3>لا توجد قضايا مطابقة لهذا النوع</h3>
+                        <p>جرّب اختيار نوع آخر أو أضف قضية جديدة من صفحة "صنف ولخّص".</p>
+                    </div>
+                `;
+                return;
+            }
+
+            data.cases.forEach(caseItem => {
+                const summaryDiv = document.createElement('div');
+                summaryDiv.className = 'case-summary';
+                summaryDiv.innerHTML = `
+                    <div class="case-summary-header">
+                        <strong>${caseItem.type}</strong>
+                        <span class="file-type-badge">${caseItem.fileType.toUpperCase()}</span>
+                    </div>
+                    <p>${caseItem.summary}</p>
+                    <div class="case-summary-footer">
+                        <span>${caseItem.summaryWordCount} كلمة في الملخص</span>
+                    </div>
+                `;
+                summariesContainer.appendChild(summaryDiv);
+            });
+        }
+
+        async function fetchLastCases() {
+            try {
+                const selectedCategory = document.getElementById('caseTypeFilter').value;
+                const response = await fetch(`/get_last_cases?category=${encodeURIComponent(selectedCategory)}`);
+                const data = await response.json();
+                displaySummaries(data);
+            } catch (error) {
+                console.error('Error fetching last cases:', error);
+            }
+        }
+
+        async function fetchDashboardInsights() {
+            try {
+                const response = await fetch('/get_dashboard_insights');
+                const data = await response.json();
+                displaySummaryAverage(data.averageSummaryLength);
+                updateFileTypeChart(data.fileTypeBreakdown);
+                renderKeywordCloud(data.topKeywords);
+                populateCaseTypeFilter(data.caseTypeOptions);
+            } catch (error) {
+                console.error('Error fetching dashboard insights:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await Promise.all([
+                fetchChartData(),
+                updateTotalDocuments(),
+                fetchDashboardInsights()
+            ]);
+
+            await fetchLastCases();
+
+            document.getElementById('caseTypeFilter').addEventListener('change', fetchLastCases);
+
+            setInterval(() => {
+                fetchChartData();
+                updateTotalDocuments();
+                fetchDashboardInsights();
+                fetchLastCases();
+            }, 15000);
+        });
+    </script>
+</head>
+
+<body dir="rtl" class="page-dashboard">
+    <header>
+        <nav>
+            <div class="right-icons">
+                <div class="auth-buttons">
+                    <a href="{{ url_for('logout') }}" class="login">خروج</a>
+                    <a href="{{ url_for('result') }}" class="create-account">صنف ولخّص</a>
+                </div>
+            </div>
+            <ul class="nav-links" id="nav-Links">
+                <li><a href="{{ url_for('index') }}">الرئيسية</a></li>
+                <li><a href="{{ url_for('result') }}">صنف ولخّص</a></li>
+                <li><a href="{{ url_for('profile') }}" class="active">الملف الشخصي</a></li>
+            </ul>
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="شعار وجيز">
+            </div>
+            <div class="toggle" onclick="toggleMenu()">☰</div>
+        </nav>
+    </header>
+
+    <main class="dashboard">
+        <section class="dashboard-hero">
+            <div>
+                <span class="eyebrow">لوحة تحكم وجيز</span>
+                <h1>مرحباً {{ username }}</h1>
+                <p>تابع أنواع القضايا التي حللتها، متوسط طول الملخصات، أكثر الكلمات حضوراً، ومصادر الملفات التي تعتمد عليها.</p>
+                <div class="hero-highlights dashboard-highlights">
+                    <div class="highlight-pill">تصفية حسب نوع القضية</div>
+                    <div class="highlight-pill">مؤشرات نصية مباشرة</div>
+                    <div class="highlight-pill">قراءة أسرع لنشاطك</div>
+                </div>
+            </div>
+            <a href="{{ url_for('result') }}" class="btn classify">إضافة قضية جديدة</a>
+        </section>
+
+        <section class="dashboard-quick-grid">
+            <div class="quick-note-card">
+                <span class="value-label">نظرة سريعة</span>
+                <strong>تحكم أوضح في ملفاتك وقضاياك</strong>
+                <p>راجع النشاط الأحدث، أبرز الكلمات، ومتوسط طول الملخصات من نفس الشاشة بدون تنقل إضافي.</p>
+            </div>
+            <div class="quick-note-card">
+                <span class="value-label">تجربة أسرع</span>
+                <strong>ابدأ من حيث توقفت</strong>
+                <p>صفّ القضايا حسب النوع ثم راجع الملخصات الأخيرة أو انتقل مباشرةً لإضافة قضية جديدة.</p>
+            </div>
+        </section>
+
+        <section class="dashboard-metrics-grid">
+            <div id="totalDocuments" class="metric-card analytics-card total-documents"></div>
+            <div id="averageSummaryLength" class="metric-card analytics-card"></div>
+            <div class="insight-card filter-card">
+                <span class="metric-label">تصفية القضايا</span>
+                <label for="caseTypeFilter" class="filter-label">اعرض آخر الملخصات حسب النوع</label>
+                <select id="caseTypeFilter" class="dashboard-select">
+                    <option value="الكل">الكل</option>
+                </select>
+            </div>
+        </section>
+
+        <section class="charts-row charts-row-extended">
+            <div class="chart-container">
+                <h2 class="title">توزيع القضايا حسب النوع</h2>
+                <canvas id="caseChart"></canvas>
+                <div id="chartEmptyState" class="empty-state chart-empty-state">
+                    <h3>لا توجد بيانات للرسم بعد</h3>
+                    <p>بمجرد إضافة قضية جديدة سيظهر توزيع الأنواع هنا.</p>
+                </div>
+            </div>
+            <div class="chart-container">
+                <h2 class="title">توزيع أنواع الملفات</h2>
+                <canvas id="fileTypeChart"></canvas>
+                <div id="fileTypeEmptyState" class="empty-state chart-empty-state">
+                    <h3>لا توجد ملفات مرفوعة بعد</h3>
+                    <p>عند رفع PDF أو DOC أو صورة ستظهر هنا مباشرة.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="dashboard-insights-row">
+            <div class="summary-section keyword-section">
+                <div class="section-heading">
+                    <h2 class="title">أكثر الكلمات استخداماً</h2>
+                    <p>نظرة سريعة على الكلمات الأكثر تكراراً في القضايا التي حللتها.</p>
+                </div>
+                <div id="keywordCloud" class="keyword-cloud"></div>
+            </div>
+
+            <div class="summary-section recent-cases-section">
+                <div class="section-heading">
+                    <h2 class="title">آخر الملخصات</h2>
+                    <p>تتغير هذه القائمة حسب نوع القضية الذي تختاره من الفلتر.</p>
+                </div>
+                <div id="caseSummaries"></div>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/script.js', v='20260317-ui3') }}"></script>
+</body>
+
+</html>

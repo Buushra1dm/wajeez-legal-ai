@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء حساب - وجيز</title>
+    <link rel="icon" href="/static/images/logo.png" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v='20260317-ui3') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body class="page-auth">
+    <header>
+        <nav>
+            <div class="right-icons">
+                <div class="auth-buttons">
+                    <a href="{{ url_for('login') }}" class="login">تسجيل الدخول</a>
+                    <a href="{{ url_for('create_account') }}" class="create-account">إنشاء حساب</a>
+                </div>
+            </div>
+            <ul class="nav-links" id="nav-Links">
+                <li><a href="{{ url_for('index') }}">الرئيسية</a></li>
+                <li><a href="{{ url_for('create_account') }}" class="active">إنشاء حساب</a></li>
+            </ul>
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="شعار وجيز">
+            </div>
+            <div class="toggle" id="toggleButton" onclick="toggleMenu()">☰</div>
+        </nav>
+    </header>
+
+    <main class="login-page">
+        <div class="login-container">
+            <div class="quote-section">
+                <div class="auth-aside">
+                    <span class="eyebrow">بداية بسيطة</span>
+                    <h1>أنشئ حسابك في وجيز</h1>
+                    <p>أنشئ حسابك لتبدأ في تصنيف النصوص القانونية وتلخيصها ومراجعة النتائج السابقة من مكان واحد.</p>
+                    <div class="auth-points">
+                        <div class="auth-point">حساب واحد لكل أعمالك</div>
+                        <div class="auth-point">حفظ النتائج للرجوع لاحقاً</div>
+                        <div class="auth-point">تجربة منظمة وسريعة</div>
+                    </div>
+                </div>
+            </div>
+            <div class="login-form">
+                <h2>إنشاء حساب</h2>
+                <p class="form-intro">املأ الحقول التالية لإنشاء حسابك بسرعة.</p>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="flash-stack">
+                    {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+                <form action="{{ url_for('create_account') }}" method="POST">
+                    <div class="input-group">
+                        <label for="username">اسم المستخدم</label>
+                        <input type="text" id="username" name="username" placeholder="مثال: wajeez_user" autocomplete="username" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="name">الاسم الكامل</label>
+                        <input type="text" id="name" name="full_name" placeholder="اكتب اسمك الكامل" autocomplete="name" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="email">البريد الإلكتروني</label>
+                        <input type="email" id="email" name="email" placeholder="name@example.com" autocomplete="email" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="password">كلمة المرور</label>
+                        <input type="password" id="password" name="password" placeholder="8 أحرف أو أكثر" minlength="8" autocomplete="new-password" required>
+                    </div>
+                    <button type="submit" class="login-btn" data-loading-text="جاري إنشاء الحساب...">إنشاء حساب</button>
+                </form>
+                <div class="form-footer">
+                    <div class="trust-note">بعد إنشاء الحساب ستتمكن من رفع الملفات وتحليلها ومتابعة نتائجك من نفس المكان.</div>
+                    <p>هل لديك حساب بالفعل؟ <a href="{{ url_for('login') }}">تسجيل الدخول</a></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/script.js', v='20260317-ui3') }}"></script>
+</body>
+
+</html>
