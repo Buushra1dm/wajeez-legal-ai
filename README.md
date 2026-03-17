@@ -1,27 +1,29 @@
-# وجيز - WAJEEZ
+# WAJEEZ
 
-وجيز هو تطبيق ويب عربي لتصنيف القضايا القانونية وتلخيصها باستخدام الذكاء الاصطناعي، مع دعم رفع الملفات، OCR للملفات الممسوحة ضوئياً، ولوحة متابعة لعرض النتائج السابقة.
+[Arabic README](README.ar.md)
 
-## المميزات
+WAJEEZ is an Arabic legal AI web application for classifying legal cases and generating concise summaries. It also supports file uploads, OCR for scanned documents, PDF export, and a user dashboard for reviewing previous analysis results.
 
-- تصنيف القضايا القانونية العربية
-- تلخيص النصوص القانونية تلقائياً
-- رفع ملفات `PDF` و `DOC` و `DOCX` و `TXT` والصور
-- دعم `OCR` للملفات الممسوحة ضوئياً
-- تصدير النتيجة إلى `PDF`
-- لوحة متابعة تعرض الإحصائيات والملخصات الأخيرة
+## Features
 
-## لقطات من المشروع
+- Arabic legal case classification
+- Automatic Arabic text summarization
+- Upload support for `PDF`, `DOC`, `DOCX`, `TXT`, and images
+- `OCR` support for scanned files
+- Export analysis results to `PDF`
+- Dashboard with case statistics, recent summaries, file type insights, and keyword highlights
 
-### الصفحة الرئيسية
+## Screenshots
+
+### Homepage
 
 ![Homepage](docs/screenshots/homepage.png)
 
-### صفحة التحليل والنتيجة
+### Analysis Result
 
 ![Result](docs/screenshots/result.png)
 
-## التقنيات المستخدمة
+## Tech Stack
 
 - Python
 - Flask
@@ -33,37 +35,38 @@
 - Tesseract OCR
 - Chart.js
 
-## التشغيل محلياً
+## Run Locally
 
 ```powershell
 cd C:\Users\bushr\OneDrive\Desktop\Project\Project
 .\.venv\Scripts\python.exe app.py
 ```
 
-ثم افتح:
+Then open:
 
 - [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
 
-## تثبيت المتطلبات
+## Install Requirements
 
 ```powershell
 pip install -r requirements.txt
 ```
 
-## ملاحظات مهمة
+## Notes
 
-- ملف النموذج الكبير `AraBART_5epoch_5e5/model/model.safetensors` غير مرفوع حالياً إلى GitHub لتخفيف حجم المستودع.
-- بعد تنزيل المشروع يمكن إضافة ملف النموذج محلياً داخل نفس المسار إذا كنت تريد تشغيل التلخيص الكامل.
-- مجلدات البيئة الافتراضية غير مضافة إلى Git.
-- قاعدة البيانات المحلية داخل `instance/` غير مضافة إلى Git.
+- The large model weight file `AraBART_5epoch_5e5/model/model.safetensors` is not included in this GitHub repository to keep the repo lightweight.
+- To enable full summarization locally, place the missing model file back into the same path.
+- Virtual environment folders are excluded from Git.
+- The local database inside `instance/` is excluded from Git.
 
-## بنية المشروع
+## Project Structure
 
 ```text
 Project/
 ├── app.py
 ├── requirements.txt
 ├── README.md
+├── README.ar.md
 ├── static/
 ├── templates/
 ├── ocr-data/
